@@ -77,6 +77,9 @@ class SearchController extends Controller
         $rawData = [];
         foreach ($parseLine as $key => $value) {
             $rawData[$key] = json_decode($value);
+
+            // Add index phonetics words
+            $rawData[$key]->index = metaphone($rawData[$key]->title) . metaphone($rawData[$key]->content);
         }
 
         return $rawData;
@@ -94,7 +97,10 @@ class SearchController extends Controller
     {
         $data = [];
         foreach ($rawData as $key => $value) {
-            if (strpos($value->title, $keyword) !== false || strpos($value->content, $keyword) !== false) {
+            // if (strpos($value->index, metaphone($keyword)) !== false) {
+            if (strpos($value->title, $keyword) !== false
+            || strpos($value->content, $keyword) !== false
+            || strpos($value->index, metaphone($keyword)) !== false) {
                 $data[] = $value;
             }
         }
