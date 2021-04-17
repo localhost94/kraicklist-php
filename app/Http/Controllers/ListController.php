@@ -5,24 +5,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class SearchController extends Controller
+class ListController extends Controller
 {
     /**
-     * General search function
+     * General list function
      *
-     * @param $q keyword from input text search
+     * @param $q keyword from input text list
+     * @param $sortBy sort by title, content or updated at
+     * @param $sortType asc or desc
      *
      * @return $data json list of searched data
      */
-    public function search(Request $request)
+    public function list(Request $request)
     {
         $rawData = $this->readFile(storage_path('app/data.gz'));
         if (!$rawData) {
             return response()->json([0 => ['title' => 'Error', 'content' => 'File cannot be read.']]);
         }
-        $data = $this->querySearch($rawData, $request->input('q'));
-        if (!$rawData) {
+
+        $search = $this->querySearch($rawData, $request->input('q'));
+        if (!$search) {
             return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from existing keywords.']]);
+        }
+
+        $data = $this->queryFilter($search, $request->input('sortBy'), $request->input('sortType'));
+        if (!$data) {
+            return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from existing filter.']]);
         }
 
         return response()->json($data);
@@ -95,14 +103,61 @@ class SearchController extends Controller
      */
     private function querySearch($rawData, $keyword)
     {
+        if (!$rawData) {
+            return $rawData;
+        }
+
         $data = [];
-        foreach ($rawData as $key => $value) {
-            // if (strpos($value->index, metaphone($keyword)) !== false) {
+        foreach ($rawData as $value) {
             if (strpos($value->title, $keyword) !== false
             || strpos($value->content, $keyword) !== false
             || strpos($value->index, metaphone($keyword)) !== false) {
                 $data[] = $value;
             }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Query to filter from the given data
+     *
+     * @param $data Data from queried search
+     * @param $sortBy Sort by title, content, updated at
+     * @param $sortType asc or desc
+     *
+     * @return $data array list of searched data
+     */
+    private function queryFilter($rawData, $sortBy, $sortType = 'asc')
+    {
+        if (!$rawData) {
+            return $rawData;
+        }
+
+        foreach ($rawData as $k => $v) {
+            if (is_array($v)) {
+                foreach ($v as $k2 => $v2) {
+                    if ($k2 == $sortBy) {
+                        $sortableArray[$k] = $v2;
+                    }
+                }
+            } else {
+                $sortableArray[$k] = $v;
+            }
+        }
+
+        switch ($sortType) {
+            case 'asc':
+                asort($sortableArray);
+            break;
+            case 'desc':
+                arsort($sortableArray);
+            break;
+        }
+
+        $data = [];
+        foreach ($sortableArray as $key => $value) {
+            $data[] = $rawData[$key];
         }
 
         return $data;
