@@ -18,7 +18,7 @@ class ListController extends Controller
      */
     public function list(Request $request)
     {
-        $rawData = $this->readFile(storage_path('app/data.gz'));
+        $rawData = $this->readFile(public_path('data.gz'));
         if (!$rawData) {
             return response()->json([0 => ['title' => 'Error', 'content' => 'File cannot be read.']]);
         }
