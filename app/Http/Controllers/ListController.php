@@ -28,9 +28,14 @@ class ListController extends Controller
             return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from existing keywords.']]);
         }
 
-        $data = $this->queryFilter($search, $request->input('sortBy'), $request->input('sortType'));
+        $sortedData = $this->querySort($search, $request->input('sortBy'), $request->input('sortType'));
+        if (!$sortedData) {
+            return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from existing sort.']]);
+        }
+
+        $data = $this->pagination($sortedData, $request->input('perpage'), $request->input('page'));
         if (!$data) {
-            return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from existing filter.']]);
+            return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from pagination.']]);
         }
 
         return response()->json($data);
@@ -128,7 +133,7 @@ class ListController extends Controller
      *
      * @return $data array list of searched data
      */
-    private function queryFilter($rawData, $sortBy, $sortType = 'asc')
+    private function querySort($rawData, $sortBy, $sortType = 'asc')
     {
         if (!$rawData) {
             return $rawData;
@@ -159,6 +164,53 @@ class ListController extends Controller
         foreach ($sortableArray as $key => $value) {
             $data[] = $rawData[$key];
         }
+
+        return $data;
+    }
+
+    /**
+     * Simple pagination
+     *
+     * @param $data Data from queried search
+     * @param $perpage Offset number per page
+     * @param $page Current page
+     *
+     * @return $data array list of searched data
+     */
+    private function pagination($rawData, $perpage = 5, $page = 1)
+    {
+        $numPosts = ctype_digit((string)$perpage) ? $perpage : 5;
+        $ostart = $start = max(1, ctype_digit((string)$page)) - 1;
+
+        $lines = count($rawData);
+
+        // get total number of pages
+        $numPages = ceil($lines / $numPosts);
+
+        // additional sanity checks (also sets $ostart if it was invalid; used later)
+        $numPosts = min($perpage, max(1, $numPosts));
+        if ($start * $numPosts > $lines ) {
+            $ostart = $start = max(0, $lines - $numPosts);
+        } else {
+            $start *= $numPosts;
+        }
+
+        $sliced = array_slice($rawData, $start, $numPosts);
+
+        // loop through posts, but break early if we run out
+        $paginatedData = [];
+        for ($n = 0; $n < $numPosts && isset($sliced[$n]); $n++ ) {
+            $paginatedData[] = $sliced[$n];
+        }
+        $data = [
+            'meta' => [
+                'total' => (int) $lines,
+                'page' => (int) $page,
+                'offsetStart' => $ostart,
+                'totalPage' => (int) $numPages
+            ],
+            'data' => $paginatedData
+        ];
 
         return $data;
     }

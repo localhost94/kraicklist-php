@@ -11,6 +11,7 @@
 <body>
     <div>
         <form id="form" autocomplete="off">
+            <input type="hidden" id="page" name="page" value="0">
             <label for="query">Keyword</label>
             <input type="text" id="query" name="query">
             <br>
@@ -32,26 +33,37 @@
     </div>
     <div>
         <ul id="resultList"></ul>
+        <a href="javascript:void" id="seemore" style="display: none;">See more</a>
     </div>
     <script>
         const Controller = {
             search: (ev) => {
                 ev.preventDefault();
                 const data = Object.fromEntries(new FormData(form));
-                const response = fetch(`/list?q=${data.query}&sortBy=${data.sortBy}&sortType=${data.sortType}`).then((response) => {
+                const page = parseInt(data.page);
+                const nextPage = page + 1;
+                const perpage = 5;
+                const nextPerPage = perpage * nextPage;
+                const response = fetch(`/list?q=${data.query}&sortBy=${data.sortBy}&sortType=${data.sortType}&page=${nextPage}&perpage=${nextPerPage}`).then((response) => {
                     response.json().then((results) => {
-                        if (!results) {
+                        if (results.total < 1) {
                             alert(`No result for ${data.query}`);
                             return
                         }
-                        Controller.updateList(results);
+                        Controller.updateList(results.data);
+
+                        document.getElementById("page").value = nextPage;
+                        if (results.data.length === results.meta.total) {
+                            document.getElementById("seemore").style.display = "none";
+                        } else {
+                            document.getElementById("seemore").style.display = "block";
+                        }
                     });
                 });
             },
 
             updateList: (results) => {
                 const rows = [];
-                console.log(results);
                 for (let result of results) {
                     rows.push(
                         `
@@ -70,6 +82,9 @@
 
         const form = document.getElementById("form");
         form.addEventListener("submit", Controller.search);
+
+        const seeMore = document.getElementById("seemore")
+        seeMore.addEventListener("click", Controller.search);
     </script>
 </body>
 

@@ -6,7 +6,7 @@ In this repository you will find simple web app for fictional startup called Kra
 
 Currently the app is just rough prototype. The search is case sensitive, limited to exact matches, & the search result is pretty much could be further improved.
 
-You could see the live version of this app [here](https://gentle-forest-97151.herokuapp.com/). Try searching for "iPhone" to see some results.
+You could see the live version of this app [here](https://kraicklist-php.herokuapp.com/). Try searching for "iPhone" to see some results.
 
 ## Your Mission
 
@@ -30,3 +30,15 @@ We will evaluate your submission based on:
 ## About Sample Data
 
 The data is translated from Arabic to English using Google Translate, so sometimes you will find funny translation on it. 🤣
+
+## Arya Submission
+
+1. Search for problem or bug inside the code
+2. Write down list of improvements
+a. Add sort by in search form
+b. Add sort asc or desc based on sort by
+c. Add pagination
+d. Add metaphone function to search by phonetics keywords extracted from title and contents
+3. Add documentation in controller
+4. Add unit test to test the function
+5. Add heroku deployment for laravel
