@@ -21,7 +21,7 @@ services:
     mongo:
       restart: always
       container_name: mongo
-      image: mongo:alpine
+      image: mongo:latest
       environment:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: bismillah
