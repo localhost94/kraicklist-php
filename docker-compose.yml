@@ -6,7 +6,7 @@ services:
       image: nginx:alpine
       volumes:
         - ./:/app
-      port:
+      ports:
         - 3001:80
 
     php:
@@ -27,5 +27,5 @@ services:
         MONGO_INITDB_ROOT_PASSWORD: bismillah
       volumes:
         - ./mongo:/data/db
-      ports:
+      portss:
         - 27017:27017
