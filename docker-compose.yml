@@ -16,6 +16,7 @@ services:
       build: .
       volumes:
         - ./:/app
+        - ./php.ini:/usr/local/etc/php/php.ini
       expose:
         - 9000
 

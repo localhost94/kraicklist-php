@@ -6,7 +6,7 @@ use App\Models\Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class ListController extends Controller
+class ListFileController extends Controller
 {
     /**
      * General list function
