@@ -40,10 +40,20 @@ class ListController extends Controller
             return response()->json([0 => ['title' => 'Error', 'content' => 'Data is not exists.']]);
         }
 
-        $data = $this->pagination($rawData, $request->input('perpage'), $request->input('page'));
-        if (!$data) {
-            return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from pagination.']]);
-        }
+        // $data = $this->pagination($rawData, $request->input('perpage'), $request->input('page'));
+        // if (!$data) {
+        //     return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from pagination.']]);
+        // }
+        $paginatedData = $rawData->skip(10)->take((int)$request->input('perpage'))->get();
+        $data = [
+            'meta' => [
+                'total' => 0,
+                'page' => 0,
+                'offsetStart' => 0,
+                'totalPage' => 0
+            ],
+            'data' => $paginatedData
+        ];
 
         return response()->json($data);
     }

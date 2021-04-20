@@ -1,0 +1,31 @@
+version: '3'
+services:
+    nginx:
+      restart: always
+      container_name: nginx
+      image: nginx:alpine
+      volumes:
+        - ./:/app
+      port:
+        - 3001:80
+
+    php:
+      restart: always
+      container_name: php
+      build: .
+      volumes:
+        - ./:/app
+      expose:
+        - 9000
+
+    mongo:
+      restart: always
+      container_name: mongo
+      image: mongo:alpine
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: bismillah
+      volumes:
+        - ./mongo:/data/db
+      ports:
+        - 27017:27017
