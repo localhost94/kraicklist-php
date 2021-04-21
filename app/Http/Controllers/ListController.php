@@ -24,10 +24,7 @@ class ListController extends Controller
 
         $keyword = $request->input('q');
         if (!empty($keyword)) {
-            $rawData = $rawData->where(function ($query) use ($keyword) {
-                return $query->where('title', 'like', "%$keyword%")
-                                ->where('content', 'like', "%$keyword%");
-            });
+            $rawData = $rawData->whereRaw(['$text' => ['$search' => $keyword]]);
         }
 
         $sortBy = $request->input('sortBy');
@@ -40,20 +37,10 @@ class ListController extends Controller
             return response()->json([0 => ['title' => 'Error', 'content' => 'Data is not exists.']]);
         }
 
-        // $data = $this->pagination($rawData, $request->input('perpage'), $request->input('page'));
-        // if (!$data) {
-        //     return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from pagination.']]);
-        // }
-        $paginatedData = $rawData->skip(10)->take((int)$request->input('perpage'))->get();
-        $data = [
-            'meta' => [
-                'total' => 0,
-                'page' => 0,
-                'offsetStart' => 0,
-                'totalPage' => 0
-            ],
-            'data' => $paginatedData
-        ];
+        $data = $this->pagination($rawData, $request->input('perpage'), $request->input('page'));
+        if (!$data) {
+            return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from pagination.']]);
+        }
 
         return response()->json($data);
     }
