@@ -19,7 +19,15 @@ services:
         - ./php.ini:/usr/local/etc/php/php.ini
       expose:
         - 9000
-    
+
+    meilisearch:
+      restart: always
+      image: getmeili/meilisearch:latest
+      command: ./meilisearch --master-key=eea8919a-6975-48de-bf5f-1930b4fd9fa8
+      volumes:
+        - $(pwd)/data.ms:/data.ms
+      ports:
+        - 7700:7700
         
 networks:
   default:
