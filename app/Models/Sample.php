@@ -20,6 +20,6 @@ class Sample extends Model
 
     public function searchableAs()
     {
-        return 'text_index';
+        return 'sample';
     }
 }
