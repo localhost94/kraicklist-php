@@ -11,7 +11,7 @@
 <body>
     <div>
         <form id="form" autocomplete="off">
-            <input type="hidden" id="page" name="page" value="0">
+            <input type="hidden" id="page" name="page" value="1">
             <label for="query">Keyword</label>
             <input type="text" id="query" name="query">
             <br>
