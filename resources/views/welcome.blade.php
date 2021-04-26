@@ -41,9 +41,9 @@
                 ev.preventDefault();
                 const data = Object.fromEntries(new FormData(form));
                 const page = parseInt(data.page);
-                const nextPage = page + 1;
+                const nextPage = ev.type == "submit" ? page : page + 1;
                 const perpage = 5;
-                const nextPerPage = perpage * nextPage;
+                const nextPerPage = ev.type == "submit" ? perpage : perpage * nextPage;
                 const response = fetch(`/list?q=${data.query}&sortBy=${data.sortBy}&sortType=${data.sortType}&page=${nextPage}&perpage=${nextPerPage}`).then((response) => {
                     response.json().then((results) => {
                         if (results.total < 1) {
@@ -53,7 +53,7 @@
                         Controller.updateList(results.data);
 
                         document.getElementById("page").value = nextPage;
-                        if (results.data.length === results.meta.total) {
+                        if (page === results.last_page) {
                             document.getElementById("seemore").style.display = "none";
                         } else {
                             document.getElementById("seemore").style.display = "block";
