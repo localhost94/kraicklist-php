@@ -20,11 +20,10 @@ class ListMeiliController extends Controller
     public function list(Request $request)
     {
         ini_set('memory_limit', '-1');
-        $rawData = Sample::query();
 
         $keyword = $request->input('q');
         if (!empty($keyword)) {
-            $rawData = $rawData->search($keyword);
+            $rawData = Sample::search($keyword);
         }
 
         if (!$rawData) {
