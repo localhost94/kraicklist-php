@@ -13,7 +13,7 @@ services:
     php:
       restart: always
       container_name: php
-      build: .
+      image: kraicklist-lumen_php:latest
       volumes:
         - ./:/app
         - ./php.ini:/usr/local/etc/php/php.ini
