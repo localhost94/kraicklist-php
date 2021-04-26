@@ -41,6 +41,16 @@ class ListController extends Controller
         if (!$data) {
             return response()->json([0 => ['title' => 'Error', 'content' => 'Empty data from pagination.']]);
         }
+        // $paginatedData = $rawData->get();
+        // $data = [
+        //     'meta' => [
+        //         'total' => 0,
+        //         'page' => 0,
+        //         'offsetStart' => 0,
+        //         'totalPage' => 0
+        //     ],
+        //     'data' => $paginatedData
+        // ];
 
         return response()->json($data);
     }

@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
         git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install exif zip
+    && docker-php-ext-install exif zip pdo_mysql
 
 RUN pecl install mongodb
 
